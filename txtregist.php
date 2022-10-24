@@ -56,6 +56,7 @@ foreach ($CERTBOT_ENV_LIST as $CERTBOT_ENV_NAME)
 // 処理用コマンドも追加
 $CERTBOT_ENV['EDIT_CMD'] = $MYDNSJP_CMD;
 
+// 27coba.lt
 // ヘッダー文字列を生成
 $MYDNSJP_HEADERS = array('Content-Type: application/x-www-form-urlencoded',
                          'Authorization: Basic '. base64_encode($MYDNSJP_MASTERID.':'.$MYDNSJP_MASTERPWD),
@@ -97,4 +98,45 @@ $DEBUG_LOG = fopen(__DIR__.'/debug.log', 'a+');
 fwrite($DEBUG_LOG, $DEBUG); 
 fclose($DEBUG_LOG);
 
+// yukari.server-on.net
+// ヘッダー文字列を生成
+$MYDNSJP_HEADERS = array('Content-Type: application/x-www-form-urlencoded',
+                         'Authorization: Basic '. base64_encode($MYDNSJP_MASTERID2.':'.$MYDNSJP_MASTERPWD2),
+                         );
+
+// URLエンコードされたクエリ文字列を生成
+$MYDNSJP_QUERY = http_build_query($CERTBOT_ENV);
+
+// コンテクストリソースを設定
+$POST_OPTIONS = array( 'http' => 
+                    array('method' => 'POST',
+                          'header' => implode("\r\n", $MYDNSJP_HEADERS),
+                          'content' => $MYDNSJP_QUERY)
+                );
+
+// 指定したURIに対してコンテクストリソースを投げてコンテンツを取得する。
+$MYDNSJP_CONTENTS = file_get_contents($MYDNSJP_URL, false, stream_context_create($POST_OPTIONS));
+
+// --------------------------------
+// 以下はデバッグ用
+// --------------------------------
+$DEBUG = "";
+/*
+foreach ($CERTBOT_ENV as $CERTBOT_ENV_NAME => $CERTBOT_ENV_VALUE)
+{
+    if ($CERTBOT_ENV_VALUE === FALSE)
+    {
+        $DEBUG .= $CERTBOT_ENV_NAME.'=FALSE'."\n";
+    }
+    else
+    {
+        $DEBUG .= $CERTBOT_ENV_NAME.'='.$CERTBOT_ENV_VALUE."\n";
+    }
+}
+*/
+$DEBUG .= 'MYDNSJP_CONTENTS='.$MYDNSJP_CONTENTS."\n";
+
+$DEBUG_LOG = fopen(__DIR__.'/debug.log', 'a+');
+fwrite($DEBUG_LOG, $DEBUG); 
+fclose($DEBUG_LOG);
 ?>
